@@ -48,33 +48,14 @@ private:
         return height(node->left) - height(node->right);
     }
 
-public:
-    Node<T> *root;
-    AVL()
+    void inorderUtil(Node<T> *node)
     {
-        this->root = nullptr;
-    }
-
-    Node<T> *rightRotate(Node<T> *z)
-    {
-        Node<T> *y = z->left;
-        Node<T> *yright = y->right;
-        y->right = z;
-        z->left = yright;
-        z->height = max(z->left->height, z->right->height) + 1;
-        y->height = max(y->left->height, y->right->height) + 1;
-        return y;
-    }
-
-    Node<T> *leftRotate(Node<T> *z)
-    {
-        Node<T> *y = z->right;
-        Node<T> *yleft = y->left;
-        y->left = z;
-        z->right = yleft;
-        z->height = max(z->left->height, z->right->height) + 1;
-        y->height = max(y->left->height, y->right->height) + 1;
-        return y;
+        if (node != nullptr)
+        {
+            inorderUtil(node->left);
+            cout << node->data << " ";
+            inorderUtil(node->right);
+        }
     }
 
     Node<T> *insertUtil(Node<T> *node, Node<T> *newnode)
@@ -129,16 +110,57 @@ public:
         return node;
     }
 
+public:
+    Node<T> *root;
+    AVL()
+    {
+        this->root = nullptr;
+    }
+
+    Node<T> *rightRotate(Node<T> *z)
+    {
+        Node<T> *y = z->left;
+        Node<T> *yright = y->right;
+        y->right = z;
+        z->left = yright;
+        z->height = max(z->left->height, z->right->height) + 1;
+        y->height = max(y->left->height, y->right->height) + 1;
+        return y;
+    }
+
+    Node<T> *leftRotate(Node<T> *z)
+    {
+        Node<T> *y = z->right;
+        Node<T> *yleft = y->left;
+        y->left = z;
+        z->right = yleft;
+        z->height = max(z->left->height, z->right->height) + 1;
+        y->height = max(y->left->height, y->right->height) + 1;
+        return y;
+    }
+
     void insert(T data)
     {
         Node<T> *newnode = new Node<T>(data);
-        this->insertUtil(this->root, newnode);
+        this->root = this->insertUtil(this->root, newnode);
+    }
+
+    void inorder()
+    {
+        inorderUtil(this->root);
+        cout << endl;
     }
 };
 
 int main()
 {
     AVL<int> *a = new AVL<int>();
-    a->insert(5);
-    cout << a->root->data << endl;
+    a->insert(10);
+    a->insert(20);
+    a->insert(30);
+    a->insert(50);
+    a->insert(25);
+    a->insert(40);
+    a->insert(10);
+    a->inorder();
 }
