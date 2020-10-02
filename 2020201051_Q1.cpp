@@ -214,6 +214,18 @@ private:
 
         return node;
     }
+    void inorderForOcc(Node<T> *node, int &count, T &data)
+    {
+        if (node != nullptr)
+        {
+            inorderForOcc(node->left, count, data);
+            if (node->data == data)
+            {
+                count++;
+            }
+            inorderForOcc(node->right, count, data);
+        }
+    }
 
 public:
     Node<T> *root;
@@ -254,19 +266,6 @@ public:
         return false;
     }
 
-    void inorderForOcc(Node<T> *node, int &count, T &data)
-    {
-        if (node != nullptr)
-        {
-            inorderForOcc(node->left, count, data);
-            if (node->data == data)
-            {
-                count++;
-            }
-            inorderForOcc(node->right, count, data);
-        }
-    }
-
     int countOccurence(T data)
     {
         int count = 0;
@@ -284,6 +283,11 @@ public:
             }
         }
         return count;
+    }
+
+    Node<T>* lowerBound(T data)
+    {
+        
     }
 };
 
