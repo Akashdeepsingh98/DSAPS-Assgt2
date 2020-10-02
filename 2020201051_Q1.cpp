@@ -29,32 +29,25 @@ public:
         this->data = data;
         this->left = this->right = nullptr;
     }
-
-    int balanceFactor()
-    {
-        if (this->left == nullptr && this->right == nullptr)
-        {
-            return 0;
-        }
-        else if (this->left == nullptr)
-        {
-            return -this->right->height;
-        }
-        else if (this->right == nullptr)
-        {
-            return this->left->height;
-        }
-        else
-        {
-            return this->left->height - this->right->height;
-        }
-    }
 };
 
 template <class T>
 class AVL
 {
 private:
+    int height(Node<T> *node)
+    {
+        if (node == nullptr)
+            return 0;
+        return node->height;
+    }
+    int balance(Node<T> *node)
+    {
+        if (node == nullptr)
+            return 0;
+        return height(node->left) - height(node->right);
+    }
+
 public:
     Node<T> *root;
     AVL()
@@ -92,18 +85,48 @@ public:
             return newnode;
         }
 
-        if (*newnode < node->data)
+        if (newnode->data < node->data)
         {
             node->left = insertUtil(node->left, newnode);
         }
-        else if (*newnode > node->data)
+        else if (newnode->data > node->data)
         {
             node->right = insertUtil(node->right, newnode);
         }
-        else if (*newnode == node->data)
+        else if (newnode->data == node->data)
         {
             node->left = insertUtil(node->left, newnode);
         }
+
+        int nodebal = balance(node);
+
+        //left left
+        if (nodebal > 1 && newnode->data <= node->left->data)
+        {
+            return rightRotate(node);
+        }
+
+        //right right
+        if (nodebal < -1 && newnode->data > node->right->data)
+        {
+            return leftRotate(node);
+        }
+
+        //left right
+        if (nodebal > 1 && newnode->data > node->left->data)
+        {
+            node->left = leftRotate(node->left);
+            return rightRotate(node);
+        }
+
+        //right left
+        if (nodebal < -1 && newnode->data < node->right->data)
+        {
+            node->right = rightRotate(node->right);
+            return leftRotate(node);
+        }
+
+        return node;
     }
 
     void insert(T data)
