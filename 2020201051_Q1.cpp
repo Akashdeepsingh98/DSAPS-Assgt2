@@ -54,7 +54,7 @@ private:
         if (node != nullptr)
         {
             inorderUtil(node->left);
-            cout << node->data << " " << node->height << endl;
+            cout << node->data << " ";
             inorderUtil(node->right);
         }
     }
@@ -238,6 +238,21 @@ public:
     {
         this->root = deleteUtil(this->root, data);
     }
+
+    bool search(T data)
+    {
+        Node<T> *cur = this->root;
+        while (cur != nullptr)
+        {
+            if (data > cur->data)
+                cur = cur->right;
+            else if (data < cur->data)
+                cur = cur->left;
+            else
+                return true;
+        }
+        return false;
+    }
 };
 
 int main()
@@ -258,4 +273,6 @@ int main()
     a->inorder();
     a->deleteNode(50);
     a->inorder();
+    int b = 40;
+    cout << a->search(34) << endl;
 }
