@@ -253,26 +253,49 @@ public:
         }
         return false;
     }
+
+    void inorderForOcc(Node<T> *node, int &count, T &data)
+    {
+        if (node != nullptr)
+        {
+            inorderForOcc(node->left, count, data);
+            if (node->data == data)
+            {
+                count++;
+            }
+            inorderForOcc(node->right, count, data);
+        }
+    }
+
+    int countOccurence(T data)
+    {
+        int count = 0;
+        Node<T> *cur = this->root;
+        while (cur != nullptr)
+        {
+            if (data > cur->data)
+                cur = cur->right;
+            else if (data < cur->data)
+                cur = cur->left;
+            else
+            {
+                inorderForOcc(cur, count, data);
+                break;
+            }
+        }
+        return count;
+    }
 };
 
 int main()
 {
     AVL<int> *a = new AVL<int>();
     a->insert(10);
-    //a->inorder();
     a->insert(20);
-    //a->inorder();
     a->insert(30);
-    //a->inorder();
     a->insert(50);
-    //a->inorder();
     a->insert(25);
-    //a->inorder();
     a->insert(40);
-    //a->insert(10);
     a->inorder();
-    a->deleteNode(50);
-    a->inorder();
-    int b = 40;
-    cout << a->search(34) << endl;
+    cout << a->countOccurence(10) << endl;
 }
