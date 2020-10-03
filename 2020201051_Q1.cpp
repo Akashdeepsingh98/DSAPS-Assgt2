@@ -287,89 +287,26 @@ public:
         return count;
     }
 
-    /*Node<T> *lowerBound(T data)
-    {
-        //return pointer to element which is greater than or equal to given data
-        Node<T> *cur = this->root;
-        while (cur != nullptr)
-        {
-            if (cur->data == data)
-            {
-                return cur;
-            }
-            else if (data < cur->data)
-            {
-                if (cur->left != nullptr)
-                {
-                    if (cur->left->data < data)
-                    {
-                        if (cur->left->right == nullptr)
-                        {
-                            return cur;
-                        }
-                        else
-                        {
-                            cur = cur->left;
-                        }
-                    }
-                    else
-                    {
-                        cur = cur->left;
-                    }
-                }
-                else
-                {
-                    return cur;
-                }
-            }
-            else
-            {
-                if (cur->right != nullptr)
-                {
-                    if (data < cur->right->data)
-                    {
-                        if (cur->right->left == nullptr)
-                        {
-                            return cur->right;
-                        }
-                        else
-                        {
-                            cur = cur->right;
-                        }
-                    }
-                    else
-                    {
-                        cur = cur->right;
-                    }
-                }
-                else
-                {
-                    return nullptr;
-                }
-            }
-        }
-        return nullptr;
-    }*/
-
     Node<T> *lowerBound(T data)
     {
         Node<T> *cur = this->root;
         Node<T> *prevcandidate = cur;
-        Node<T>* cur2 = this->root;
-        while(cur2!=nullptr)
+        Node<T> *cur2 = this->root;
+        while (cur2 != nullptr)
         {
-            if(cur2->data == data)
+            if (cur2->data == data)
             {
                 return cur2;
             }
-            else if(cur2->data>data)
+            else if (cur2->data > data)
             {
                 prevcandidate = cur2;
+                cur = cur2;
                 break;
             }
-            cur2=cur2->right;
+            cur2 = cur2->right;
         }
-        if(cur2==nullptr)
+        if (cur2 == nullptr)
         {
             return nullptr;
         }
@@ -435,6 +372,65 @@ public:
         }
         return nullptr;
     }
+
+    Node<T> *upperBound(T data)
+    {
+        Node<T> *cur = this->root;
+        Node<T> *prevcandidate = cur;
+        Node<T> *cur2 = this->root;
+        while (cur2 != nullptr)
+        {
+            if (cur2->data > data)
+            {
+                prevcandidate = cur2;
+                cur = cur2;
+                break;
+            }
+            cur2 = cur2->right;
+        }
+        if (cur2 == nullptr)
+        {
+            return nullptr;
+        }
+
+        while (true)
+        {
+            if (data == cur->data)
+            {
+                if (cur->right == nullptr)
+                {
+                    return prevcandidate;
+                }
+                else
+                {
+                    cur = cur->right;
+                }
+            }
+            else if (data < cur->data)
+            {
+                prevcandidate = cur;
+                if (cur->left == nullptr)
+                {
+                    return prevcandidate;
+                }
+                else
+                {
+                    cur = cur->left;
+                }
+            }
+            else
+            {
+                if (cur->right == nullptr)
+                {
+                    return prevcandidate;
+                }
+                else
+                {
+                    cur = cur->right;
+                }
+            }
+        }
+    }
 };
 
 int main()
@@ -447,7 +443,9 @@ int main()
     a->insert(25);
     a->insert(40);
     a->inorder();
-    Node<int> *b = a->lowerBound(51);
+    int c;
+    cin >> c;
+    Node<int> *b = a->upperBound(c);
     if (b != nullptr)
     {
         cout << b->data << endl;
