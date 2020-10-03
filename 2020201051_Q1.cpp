@@ -42,6 +42,7 @@ private:
             return 0;
         return node->height;
     }
+
     int balance(Node<T> *node)
     {
         if (node == nullptr)
@@ -214,6 +215,7 @@ private:
 
         return node;
     }
+
     void inorderForOcc(Node<T> *node, int &count, T &data)
     {
         if (node != nullptr)
@@ -285,9 +287,153 @@ public:
         return count;
     }
 
-    Node<T>* lowerBound(T data)
+    /*Node<T> *lowerBound(T data)
     {
-        
+        //return pointer to element which is greater than or equal to given data
+        Node<T> *cur = this->root;
+        while (cur != nullptr)
+        {
+            if (cur->data == data)
+            {
+                return cur;
+            }
+            else if (data < cur->data)
+            {
+                if (cur->left != nullptr)
+                {
+                    if (cur->left->data < data)
+                    {
+                        if (cur->left->right == nullptr)
+                        {
+                            return cur;
+                        }
+                        else
+                        {
+                            cur = cur->left;
+                        }
+                    }
+                    else
+                    {
+                        cur = cur->left;
+                    }
+                }
+                else
+                {
+                    return cur;
+                }
+            }
+            else
+            {
+                if (cur->right != nullptr)
+                {
+                    if (data < cur->right->data)
+                    {
+                        if (cur->right->left == nullptr)
+                        {
+                            return cur->right;
+                        }
+                        else
+                        {
+                            cur = cur->right;
+                        }
+                    }
+                    else
+                    {
+                        cur = cur->right;
+                    }
+                }
+                else
+                {
+                    return nullptr;
+                }
+            }
+        }
+        return nullptr;
+    }*/
+
+    Node<T> *lowerBound(T data)
+    {
+        Node<T> *cur = this->root;
+        Node<T> *prevcandidate = cur;
+        Node<T>* cur2 = this->root;
+        while(cur2!=nullptr)
+        {
+            if(cur2->data == data)
+            {
+                return cur2;
+            }
+            else if(cur2->data>data)
+            {
+                prevcandidate = cur2;
+                break;
+            }
+            cur2=cur2->right;
+        }
+        if(cur2==nullptr)
+        {
+            return nullptr;
+        }
+
+        while (true)
+        {
+            if (cur->data == data)
+            {
+                return cur;
+            }
+            else if (data < cur->data)
+            {
+                prevcandidate = cur;
+                if (cur->left != nullptr)
+                {
+                    if (cur->left->data < data)
+                    {
+                        if (cur->left->right == nullptr)
+                        {
+                            return prevcandidate;
+                        }
+                        else
+                        {
+                            cur = cur->left;
+                        }
+                    }
+                    else
+                    {
+                        cur = cur->left;
+                    }
+                }
+                else
+                {
+                    return prevcandidate;
+                }
+            }
+            else
+            {
+                if (cur->right != nullptr)
+                {
+                    if (data < cur->right->data)
+                    {
+                        prevcandidate = cur->right;
+                        if (cur->right->left == nullptr)
+                        {
+                            return cur->right;
+                        }
+                        else
+                        {
+                            cur = cur->right;
+                        }
+                    }
+                    else
+                    {
+                        cur = cur->right;
+                    }
+                }
+                else
+                {
+                    return prevcandidate;
+                }
+            }
+        }
+        return nullptr;
     }
 };
 
@@ -301,5 +447,9 @@ int main()
     a->insert(25);
     a->insert(40);
     a->inorder();
-    cout << a->countOccurence(10) << endl;
+    Node<int> *b = a->lowerBound(51);
+    if (b != nullptr)
+    {
+        cout << b->data << endl;
+    }
 }
