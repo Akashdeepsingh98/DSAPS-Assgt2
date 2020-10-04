@@ -229,6 +229,128 @@ private:
         }
     }
 
+    Node<T> *findle(T data)
+    {
+        Node<T> *cur = this->root;
+        Node<T> *cur2 = this->root;
+        Node<T> *prevcandidate = cur;
+        while (cur2 != nullptr)
+        {
+            if (cur2->data == data)
+            {
+                return cur2;
+            }
+            else if (cur2->data < data)
+            {
+                prevcandidate = cur2;
+                cur = cur2;
+                break;
+            }
+            cur2 = cur2->left;
+        }
+
+        if (cur2 == nullptr)
+            return nullptr;
+
+        while (true)
+        {
+            if (cur->data == data)
+            {
+                return cur;
+            }
+            else if (cur->data < data)
+            {
+                prevcandidate = cur;
+                if (cur->right != nullptr)
+                {
+                    if (cur->right->data > data)
+                    {
+                        if (cur->right->left == nullptr)
+                        {
+                            return prevcandidate;
+                        }
+                        else
+                        {
+                            cur = cur->right;
+                        }
+                    }
+                    else
+                    {
+                        cur = cur->right;
+                    }
+                }
+                else
+                {
+                    return prevcandidate;
+                }
+            }
+            else
+            {
+                // data < cur->data
+                if (cur->left == nullptr)
+                {
+                    return prevcandidate;
+                }
+                else
+                {
+                    if (data > cur->left->data)
+                    {
+                        prevcandidate = cur->left;
+                        if (cur->left->right == nullptr)
+                        {
+                            return cur->left;
+                        }
+                        else
+                        {
+                            cur = cur->left;
+                        }
+                    }
+                    else
+                    {
+                        cur = cur->left;
+                    }
+                }
+            }
+        }
+    }
+
+    void revInorder(Node<T> *node, int &count, int k, Node<T> **kth)
+    {
+        if (node != nullptr)
+        {
+            revInorder(node->right, count, k, kth);
+            count++;
+            if (count == k)
+            {
+                if (*kth == nullptr)
+                    *kth = node;
+                return;
+            }
+            revInorder(node->left, count, k, kth);
+        }
+    }
+
+    void countRange(Node<T> *node, int &count, T &ldata, T &udata)
+    {
+        if (node != nullptr)
+        {
+            if (node->data >= ldata && node->data <= udata)
+            {
+                count++;
+                countRange(node->left, count, ldata, udata);
+                countRange(node->right, count, ldata, udata);
+            }
+            else if (node->data < ldata)
+            {
+                countRange(node->right, count, ldata, udata);
+            }
+            else if (node->data > udata)
+            {
+                countRange(node->left, count, ldata, udata);
+            }
+        }
+    }
+
 public:
     Node<T> *root;
     AVL()
@@ -432,91 +554,6 @@ public:
         }
     }
 
-    Node<T> *findle(T data)
-    {
-        Node<T> *cur = this->root;
-        Node<T> *cur2 = this->root;
-        Node<T> *prevcandidate = cur;
-        while (cur2 != nullptr)
-        {
-            if (cur2->data == data)
-            {
-                return cur2;
-            }
-            else if (cur2->data < data)
-            {
-                prevcandidate = cur2;
-                cur = cur2;
-                break;
-            }
-            cur2 = cur2->left;
-        }
-
-        if (cur2 == nullptr)
-            return nullptr;
-
-        while (true)
-        {
-            if (cur->data == data)
-            {
-                return cur;
-            }
-            else if (cur->data < data)
-            {
-                prevcandidate = cur;
-                if (cur->right != nullptr)
-                {
-                    if (cur->right->data > data)
-                    {
-                        if (cur->right->left == nullptr)
-                        {
-                            return prevcandidate;
-                        }
-                        else
-                        {
-                            cur = cur->right;
-                        }
-                    }
-                    else
-                    {
-                        cur = cur->right;
-                    }
-                }
-                else
-                {
-                    return prevcandidate;
-                }
-            }
-            else
-            {
-                // data < cur->data
-                if (cur->left == nullptr)
-                {
-                    return prevcandidate;
-                }
-                else
-                {
-                    if (data > cur->left->data)
-                    {
-                        prevcandidate = cur->left;
-                        if (cur->left->right == nullptr)
-                        {
-                            return cur->left;
-                        }
-                        else
-                        {
-                            cur = cur->left;
-                        }
-                    }
-                    else
-                    {
-                        cur = cur->left;
-                    }
-                }
-            }
-        }
-    }
-
     Node<T> *closestElement(T data)
     {
         Node<T> *ge = lowerBound(data);
@@ -533,6 +570,21 @@ public:
             return ge;
         return le;
     }
+
+    Node<T> *kthlargest(int k)
+    {
+        Node<T> *kth = nullptr;
+        int count = 0;
+        revInorder(this->root, count, k, &kth);
+        return kth;
+    }
+
+    int countInRange(T ldata, T udata)
+    {
+        int count = 0;
+        countRange(this->root, count, ldata, udata);
+        return count;
+    }
 };
 
 int main()
@@ -545,11 +597,14 @@ int main()
     a->insert(25);
     a->insert(40);
     a->inorder();
-    int c;
-    cin >> c;
-    Node<int> *b = a->closestElement(c);
-    if (b != nullptr)
-    {
-        cout << b->data << endl;
-    }
+    //int c;
+    //cin >> c;
+    //Node<int> *b = a->kthlargest(c);
+    //if (b != nullptr)
+    //{
+    //    cout << b->data << endl;
+    //}
+    int ldata, udata;
+    cin >> ldata >> udata;
+    cout << a->countInRange(ldata, udata) << endl;
 }
