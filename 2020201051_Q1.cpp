@@ -585,13 +585,13 @@ public:
             return le;
         if (le == nullptr)
             return ge;
-        if (ge->data == data)
-            return ge;
         if (le->data == data)
-            return le;
-        if (abs(le->data - data) > abs(ge->data - data))
             return ge;
-        return le;
+        if (ge->data == data)
+            return le;
+        if (abs(le->data - data) <= abs(ge->data - data))
+            return le;
+        return ge;
     }
 
     Node<T> *kthlargest(int k)
@@ -612,7 +612,7 @@ public:
 
 int main()
 {
-    AVL<int> *a = new AVL<int>();
+    AVL<int,IntegerComp> *a = new AVL<int, IntegerComp>();
     a->insert(10);
     a->insert(20);
     a->insert(30);
