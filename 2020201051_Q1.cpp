@@ -336,17 +336,21 @@ private:
         }
     }
 
-    void revInorder(Node<T> *node, int &count, int k, Node<T> **kth)
+    void revInorder(Node<T> *node, int &count, int k, Node<T> **kth, Node<T> *prevval)
     {
         if (node != nullptr)
         {
             revInorder(node->right, count, k, kth);
-            count++;
-            if (count == k)
+            if (node->data != prevval->data)
             {
-                if (*kth == nullptr)
-                    *kth = node;
-                return;
+                count++;
+                prevval = node;
+                if (count == k)
+                {
+                    if (*kth == nullptr)
+                        *kth = node;
+                    return;
+                }
             }
             revInorder(node->left, count, k, kth);
         }
@@ -596,9 +600,17 @@ public:
 
     Node<T> *kthlargest(int k)
     {
+        Node<T> *prevval;
+        Node<T> *cur = this->root;
+        while (cur->right != nullptr)
+        {
+            cur = cur->right;
+        }
+        prevval = cur;
+        prevval = nullptr;
         Node<T> *kth = nullptr;
         int count = 0;
-        revInorder(this->root, count, k, &kth);
+        revInorder(this->root, count, k, &kth, prevval);
         return kth;
     }
 
@@ -612,7 +624,7 @@ public:
 
 int main()
 {
-    AVL<int,IntegerComp> *a = new AVL<int, IntegerComp>();
+    AVL<int, IntegerComp> *a = new AVL<int, IntegerComp>();
     a->insert(10);
     a->insert(20);
     a->insert(30);
