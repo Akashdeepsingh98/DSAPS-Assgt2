@@ -431,6 +431,108 @@ public:
             }
         }
     }
+
+    Node<T> *findle(T data)
+    {
+        Node<T> *cur = this->root;
+        Node<T> *cur2 = this->root;
+        Node<T> *prevcandidate = cur;
+        while (cur2 != nullptr)
+        {
+            if (cur2->data == data)
+            {
+                return cur2;
+            }
+            else if (cur2->data < data)
+            {
+                prevcandidate = cur2;
+                cur = cur2;
+                break;
+            }
+            cur2 = cur2->left;
+        }
+
+        if (cur2 == nullptr)
+            return nullptr;
+
+        while (true)
+        {
+            if (cur->data == data)
+            {
+                return cur;
+            }
+            else if (cur->data < data)
+            {
+                prevcandidate = cur;
+                if (cur->right != nullptr)
+                {
+                    if (cur->right->data > data)
+                    {
+                        if (cur->right->left == nullptr)
+                        {
+                            return prevcandidate;
+                        }
+                        else
+                        {
+                            cur = cur->right;
+                        }
+                    }
+                    else
+                    {
+                        cur = cur->right;
+                    }
+                }
+                else
+                {
+                    return prevcandidate;
+                }
+            }
+            else
+            {
+                // data < cur->data
+                if (cur->left == nullptr)
+                {
+                    return prevcandidate;
+                }
+                else
+                {
+                    if (data > cur->left->data)
+                    {
+                        prevcandidate = cur->left;
+                        if (cur->left->right == nullptr)
+                        {
+                            return cur->left;
+                        }
+                        else
+                        {
+                            cur = cur->left;
+                        }
+                    }
+                    else
+                    {
+                        cur = cur->left;
+                    }
+                }
+            }
+        }
+    }
+
+    Node<T> *closestElement(T data)
+    {
+        Node<T> *ge = lowerBound(data);
+        Node<T> *le = findle(data);
+        if (ge == nullptr)
+            return le;
+        if (le == nullptr)
+            return ge;
+        if (ge->data == data)
+            return ge;
+        if (le->data == data)
+            return le;
+        if (abs(le->data - data) > abs(ge->data - data))
+            return ge;
+        return le;
+    }
 };
 
 int main()
@@ -445,7 +547,7 @@ int main()
     a->inorder();
     int c;
     cin >> c;
-    Node<int> *b = a->upperBound(c);
+    Node<int> *b = a->closestElement(c);
     if (b != nullptr)
     {
         cout << b->data << endl;
