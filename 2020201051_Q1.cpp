@@ -15,6 +15,28 @@ int min(int a, int b)
     return a;
 }
 
+class IntegerComp
+{
+public:
+    bool operator()(long long int a, long long int b)
+    {
+        if (a < b)
+            return true;
+        return false;
+    }
+};
+
+class StringComp
+{
+public:
+    bool operator()(string &a, string &b)
+    {
+        if (a < b)
+            return true;
+        return false;
+    }
+};
+
 template <class T>
 class Node
 {
@@ -32,7 +54,7 @@ public:
     }
 };
 
-template <class T>
+template <class T, class Comparator>
 class AVL
 {
 private:
@@ -68,7 +90,7 @@ private:
             return newnode;
         }
 
-        if (newnode->data < node->data)
+        if (cmp(newnode->data, node->data))
         {
             node->left = insertUtil(node->left, newnode);
         }
@@ -86,7 +108,7 @@ private:
         //cout<<nodebal<<endl;
 
         //left left
-        if (nodebal > 1 && newnode->data <= node->left->data)
+        if (nodebal > 1 && (cmp(newnode->data, node->left->data) || newnode->data == node->left->data))
         {
             return rightRotate(node);
         }
@@ -105,7 +127,7 @@ private:
         }
 
         //right left
-        if (nodebal < -1 && newnode->data <= node->right->data)
+        if (nodebal < -1 && (cmp(newnode->data, node->right->data) || newnode->data == node->right->data))
         {
             node->right = rightRotate(node->right);
             return leftRotate(node);
@@ -148,7 +170,7 @@ private:
         if (node == nullptr)
             return nullptr;
 
-        if (data < node->data)
+        if (cmp(data, node->data))
         {
             node->left = deleteUtil(node->left, data);
         }
@@ -240,7 +262,7 @@ private:
             {
                 return cur2;
             }
-            else if (cur2->data < data)
+            else if (cmp(cur2->data, data))
             {
                 prevcandidate = cur2;
                 cur = cur2;
@@ -258,7 +280,7 @@ private:
             {
                 return cur;
             }
-            else if (cur->data < data)
+            else if (cmp(cur->data, data))
             {
                 prevcandidate = cur;
                 if (cur->right != nullptr)
@@ -340,7 +362,7 @@ private:
                 countRange(node->left, count, ldata, udata);
                 countRange(node->right, count, ldata, udata);
             }
-            else if (node->data < ldata)
+            else if (cmp(node->data, ldata))
             {
                 countRange(node->right, count, ldata, udata);
             }
@@ -353,6 +375,7 @@ private:
 
 public:
     Node<T> *root;
+    Comparator cmp;
     AVL()
     {
         this->root = nullptr;
@@ -382,7 +405,7 @@ public:
         {
             if (data > cur->data)
                 cur = cur->right;
-            else if (data < cur->data)
+            else if (cmp(data < cur->data))
                 cur = cur->left;
             else
                 return true;
@@ -398,7 +421,7 @@ public:
         {
             if (data > cur->data)
                 cur = cur->right;
-            else if (data < cur->data)
+            else if (cmp(data < cur->data))
                 cur = cur->left;
             else
             {
@@ -439,12 +462,12 @@ public:
             {
                 return cur;
             }
-            else if (data < cur->data)
+            else if (cmp(data, cur->data))
             {
                 prevcandidate = cur;
                 if (cur->left != nullptr)
                 {
-                    if (cur->left->data < data)
+                    if (cmp(cur->left->data, data))
                     {
                         if (cur->left->right == nullptr)
                         {
@@ -469,7 +492,7 @@ public:
             {
                 if (cur->right != nullptr)
                 {
-                    if (data < cur->right->data)
+                    if (cmp(data, cur->right->data))
                     {
                         prevcandidate = cur->right;
                         if (cur->right->left == nullptr)
@@ -528,7 +551,7 @@ public:
                     cur = cur->right;
                 }
             }
-            else if (data < cur->data)
+            else if (cmp(data, cur->data))
             {
                 prevcandidate = cur;
                 if (cur->left == nullptr)
@@ -596,15 +619,4 @@ int main()
     a->insert(50);
     a->insert(25);
     a->insert(40);
-    a->inorder();
-    //int c;
-    //cin >> c;
-    //Node<int> *b = a->kthlargest(c);
-    //if (b != nullptr)
-    //{
-    //    cout << b->data << endl;
-    //}
-    int ldata, udata;
-    cin >> ldata >> udata;
-    cout << a->countInRange(ldata, udata) << endl;
 }
