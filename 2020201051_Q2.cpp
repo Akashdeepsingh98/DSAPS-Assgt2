@@ -1,6 +1,47 @@
 #include <iostream>
 using namespace std;
 
+class IntegerHash
+{
+public:
+    long long int operator()(long long int a)
+    {
+        return a;
+    }
+};
+
+class StringHash
+{
+public:
+    long long int operator()(string s)
+    {
+        long long int sum = 0;
+        for (int i = 0; i < s.size(); i++)
+        {
+            sum += s[i];
+        }
+        return sum;
+    }
+};
+
+class DecimalHash
+{
+public:
+    long long int operator()(long double a)
+    {
+        return (long long int)a;
+    }
+};
+
+class CharHash
+{
+public:
+    int operator()(char a)
+    {
+        return a;
+    }
+};
+
 template <class T>
 class Node
 {
@@ -73,19 +114,20 @@ public:
         return true;
     }
 
-    T getval(int &keyhash)
+    void getval(int &keyhash, T &result)
     {
         if (keyhash >= capacity)
         {
             cout << "Provide valid key" << endl;
-            return -1;
+            return;
         }
         if (this->arr[keyhash] == nullptr)
         {
             cout << "Provided key has no value" << endl;
-            return -1;
+            return;
         }
-        return this->arr[keyhash]->data;
+        //return this->arr[keyhash]->data;
+        result = this->arr[keyhash]->data;
     }
 
     Node<T> &setval(int &keyhash)
@@ -95,57 +137,50 @@ public:
             this->incrSize(keyhash + 1);
         }
         this->arr[keyhash] = new Node<T>(0);
-        return this->arr[keyhash];
+        return *(this->arr[keyhash]);
     }
 };
 
-template <class K, class V>
+template <class K, class V, class Hasher>
 class UnorderedMap
 {
 private:
 public:
     Vector<V> vector;
     int capacity;
+    Hasher hasher;
     UnorderedMap()
     {
         this->capacity = 50;
     }
     void insert(K key, V value)
     {
-        int keyhash = this->hashfunc(key);
+        int keyhash = this->hasher(key);
         this->vector.insert(keyhash, value);
     }
-    int hashfunc(K &key)
+    void erase(K key)
     {
-        return int(key);
-    }
-    void erase(K &key)
-    {
-        int keyhash = this->hashfunc(key);
+        int keyhash = this->hasher(key);
         this->vector.erase(keyhash);
     }
-    bool find(K &key)
+    bool find(K key)
     {
-        int keyhash = this->hashfunc(key);
+        int keyhash = this->hasher(key);
         return this->vector.find(keyhash);
     }
 
-    V operator[](K key) 
+    V operator[](K key)
     {
-        int keyhash = this->hashfunc(key);
-        return this->vector.getval(keyhash);
+        int keyhash = this->hasher(key);
+        V result;
+        this->vector.getval(keyhash, result);
+        return result;
     }
-
-    //Node<V> &operator[](K key)
-    //{
-    //    int keyhash = this->hashfunc(key);
-    //    return this->vector.setval(keyhash);
-    //}
 };
 
 int main()
 {
-    UnorderedMap<int, int> um;
-    um.insert(3,5);
-    cout<<um[3]<<endl;
+    UnorderedMap<string, string, StringHash> um;
+    um.insert("name", "akash");
+    cout << um["named"] << endl;
 }
