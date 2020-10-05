@@ -15,6 +15,13 @@ int min(int a, int b)
     return a;
 }
 
+int abs(int a)
+{
+    if (a < 0)
+        return -a;
+    return a;
+}
+
 class IntegerComp
 {
 public:
@@ -94,11 +101,11 @@ private:
         {
             node->left = insertUtil(node->left, newnode);
         }
-        else if (newnode->data > node->data)
+        else if (cmp(node->data, newnode->data))
         {
             node->right = insertUtil(node->right, newnode);
         }
-        else if (newnode->data == node->data)
+        else if (!cmp(newnode->data, node->data) && !cmp(node->data, newnode->data))
         {
             node->left = insertUtil(node->left, newnode);
         }
@@ -108,26 +115,31 @@ private:
         //cout<<nodebal<<endl;
 
         //left left
-        if (nodebal > 1 && (cmp(newnode->data, node->left->data) || newnode->data == node->left->data))
+        //(nodebal > 1 && (cmp(newnode->data, node->left->data) || newnode->data == node->left->data))
+        if (nodebal > 1 &&
+            (cmp(newnode->data, node->left->data) ||
+             (!cmp(newnode->data, node->left->data) && !cmp(node->left->data, newnode->data))))
         {
             return rightRotate(node);
         }
 
         //right right
-        if (nodebal < -1 && newnode->data > node->right->data)
+        if (nodebal < -1 && cmp(node->right->data, newnode->data))
         {
             return leftRotate(node);
         }
 
         //left right
-        if (nodebal > 1 && newnode->data > node->left->data)
+        if (nodebal > 1 && cmp(node->left->data, newnode->data))
         {
             node->left = leftRotate(node->left);
             return rightRotate(node);
         }
 
         //right left
-        if (nodebal < -1 && (cmp(newnode->data, node->right->data) || newnode->data == node->right->data))
+        if (nodebal < -1 &&
+            (cmp(newnode->data, node->right->data) ||
+             (!cmp(newnode->data, node->right->data) && !cmp(node->right->data, newnode->data))))
         {
             node->right = rightRotate(node->right);
             return leftRotate(node);
@@ -174,7 +186,7 @@ private:
         {
             node->left = deleteUtil(node->left, data);
         }
-        else if (data > node->data)
+        else if (cmp(node->data, data))
         {
             node->right = deleteUtil(node->right, data);
         }
@@ -285,7 +297,7 @@ private:
                 prevcandidate = cur;
                 if (cur->right != nullptr)
                 {
-                    if (cur->right->data > data)
+                    if (cmp(data, cur->right->data))
                     {
                         if (cur->right->left == nullptr)
                         {
@@ -315,7 +327,7 @@ private:
                 }
                 else
                 {
-                    if (data > cur->left->data)
+                    if (cmp(cur->left->data, data))
                     {
                         prevcandidate = cur->left;
                         if (cur->left->right == nullptr)
@@ -356,7 +368,7 @@ private:
     {
         if (node != nullptr)
         {
-            if (node->data >= ldata && node->data <= udata)
+            if ((cmp(ldata, node->data) || (!cmp(ldata, node->data) && !cmp(node->data, ldata))) && (cmp(node->data, udata) || (!cmp(node->data, udata) && !cmp(udata, node.data))))
             {
                 count++;
                 countRange(node->left, count, ldata, udata);
@@ -366,7 +378,7 @@ private:
             {
                 countRange(node->right, count, ldata, udata);
             }
-            else if (node->data > udata)
+            else if (cmp(udata, node->data))
             {
                 countRange(node->left, count, ldata, udata);
             }
@@ -403,7 +415,7 @@ public:
         Node<T> *cur = this->root;
         while (cur != nullptr)
         {
-            if (data > cur->data)
+            if (cmp(cur->data, data))
                 cur = cur->right;
             else if (cmp(data < cur->data))
                 cur = cur->left;
@@ -419,7 +431,7 @@ public:
         Node<T> *cur = this->root;
         while (cur != nullptr)
         {
-            if (data > cur->data)
+            if (cmp(cur->data, data))
                 cur = cur->right;
             else if (cmp(data < cur->data))
                 cur = cur->left;
@@ -439,11 +451,11 @@ public:
         Node<T> *cur2 = this->root;
         while (cur2 != nullptr)
         {
-            if (cur2->data == data)
+            if (!cmp(cur2->data, data) && !cmp(data, cur2->data))
             {
                 return cur2;
             }
-            else if (cur2->data > data)
+            else if (cmp(data, cur2->data))
             {
                 prevcandidate = cur2;
                 cur = cur2;
@@ -458,7 +470,7 @@ public:
 
         while (true)
         {
-            if (cur->data == data)
+            if (!cmp(cur->data, data) && !cmp(data, cur->data))
             {
                 return cur;
             }
@@ -525,7 +537,7 @@ public:
         Node<T> *cur2 = this->root;
         while (cur2 != nullptr)
         {
-            if (cur2->data > data)
+            if (cmp(data, cur2->data))
             {
                 prevcandidate = cur2;
                 cur = cur2;
@@ -540,7 +552,7 @@ public:
 
         while (true)
         {
-            if (data == cur->data)
+            if (!cmp(cur->data, data) && !cmp(data, cur->data))
             {
                 if (cur->right == nullptr)
                 {
@@ -585,9 +597,9 @@ public:
             return le;
         if (le == nullptr)
             return ge;
-        if (le->data == data)
+        if (!cmp(le->data, data) && !cmp(data, le->data))
             return ge;
-        if (ge->data == data)
+        if (!cmp(ge->data, data) && !cmp(data, ge->data))
             return le;
         if (abs(le->data - data) <= abs(ge->data - data))
             return le;
