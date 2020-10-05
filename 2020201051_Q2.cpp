@@ -13,6 +13,10 @@ public:
         this->data = data;
         this->next = nullptr;
     }
+    void operator=(T data)
+    {
+        this->data = data;
+    }
 };
 
 template <class T>
@@ -39,18 +43,7 @@ public:
             this->incrSize(keyhash + 1);
         }
 
-        if (this->arr[keyhash] == nullptr)
-        {
-            this->arr[keyhash] = new Node<T>(value);
-            return;
-        }
-
-        Node<T> *cur = this->arr[keyhash];
-        while (cur->next != nullptr)
-        {
-            cur = cur->next;
-        }
-        cur->next = new Node<T>(value);
+        this->arr[keyhash] = new Node<T>(value);
     }
 
     void incrSize(int newsize)
@@ -68,8 +61,40 @@ public:
     {
         if (keyhash >= this->capacity)
             return;
+        this->arr[keyhash] = nullptr;
+    }
+
+    bool find(int &keyhash)
+    {
+        if (keyhash >= this->capacity)
+            return false;
         if (this->arr[keyhash] == nullptr)
-            return;
+            return false;
+        return true;
+    }
+
+    T getval(int &keyhash)
+    {
+        if (keyhash >= capacity)
+        {
+            cout << "Provide valid key" << endl;
+            return -1;
+        }
+        if (this->arr[keyhash] == nullptr)
+        {
+            cout << "Provided key has no value" << endl;
+            return -1;
+        }
+        return this->arr[keyhash]->data;
+    }
+
+    Node<T> &setval(int &keyhash)
+    {
+        if (keyhash >= this->capacity)
+        {
+            this->incrSize(keyhash + 1);
+        }
+        return this->arr[keyhash];
     }
 };
 
@@ -97,6 +122,23 @@ public:
     {
         int keyhash = this->hashfunc(key);
         this->vector.erase(keyhash);
+    }
+    bool find(K &key)
+    {
+        int keyhash = this->hashfunc(key);
+        return this->vector.find(keyhash);
+    }
+
+    V operator[](K &key)
+    {
+        int keyhash = this->hashfunc(key);
+        return this->vector.getval(keyhash);
+    }
+
+    Node<V> &operator[](K &key)
+    {
+        int keyhash = this->hashfunc(key);
+        return this->vector.setval(keyhash);
     }
 };
 
