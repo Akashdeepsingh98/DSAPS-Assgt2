@@ -94,6 +94,7 @@ public:
         {
             this->incrSize(keyhash + 1);
         }
+        this->arr[keyhash] = new Node<T>(0);
         return this->arr[keyhash];
     }
 };
@@ -109,7 +110,7 @@ public:
     {
         this->capacity = 50;
     }
-    void insert(K &key, V &value)
+    void insert(K key, V value)
     {
         int keyhash = this->hashfunc(key);
         this->vector.insert(keyhash, value);
@@ -129,19 +130,22 @@ public:
         return this->vector.find(keyhash);
     }
 
-    V operator[](K &key)
+    V operator[](K key) 
     {
         int keyhash = this->hashfunc(key);
         return this->vector.getval(keyhash);
     }
 
-    Node<V> &operator[](K &key)
-    {
-        int keyhash = this->hashfunc(key);
-        return this->vector.setval(keyhash);
-    }
+    //Node<V> &operator[](K key)
+    //{
+    //    int keyhash = this->hashfunc(key);
+    //    return this->vector.setval(keyhash);
+    //}
 };
 
 int main()
 {
+    UnorderedMap<int, int> um;
+    um.insert(3,5);
+    cout<<um[3]<<endl;
 }
