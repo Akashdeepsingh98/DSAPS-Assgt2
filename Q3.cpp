@@ -44,35 +44,37 @@ public:
     }
 };
 
-template <class T>
+template <class K, class V>
 class Node
 {
 private:
 public:
-    T data;
-    Node<T> *left;
-    Node<T> *right;
+    K key;
+    V data;
+    Node<K, V> *left;
+    Node<K, V> *right;
     int height;
-    Node(T data)
+    Node(K key, V value)
     {
-        this->data = data;
+        this->key = key;
+        this->value = value;
         this->left = this->right = nullptr;
         this->height = 1;
     }
 };
 
-template <class T, class Comparator>
-class AVL
+template <class K, class V, class Comparator>
+class OrderedMap
 {
 private:
-    int height(Node<T> *node)
+    int height(Node<K, V> *node)
     {
         if (node == nullptr)
             return 0;
         return node->height;
     }
 
-    int balance(Node<T> *node)
+    int balance(Node<K, V> *node)
     {
         if (node == nullptr)
             return 0;
