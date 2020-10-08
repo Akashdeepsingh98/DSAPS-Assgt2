@@ -49,14 +49,14 @@ private:
 public:
     Node<T> *next;
     T data;
-    Node(T &data)
+    Node(T data)
     {
         this->data = data;
         this->next = nullptr;
     }
-    void operator=(T data)
+    Node()
     {
-        this->data = data;
+        this->next = nullptr;
     }
 };
 
@@ -114,20 +114,18 @@ public:
         return true;
     }
 
-    void getval(int &keyhash, T &result)
+    T &getval(int &keyhash)
     {
         if (keyhash >= capacity)
         {
-            cout << "Provide valid key" << endl;
-            return;
+            this->incrSize(keyhash + 1);
+            this->arr[keyhash] = new Node<T>();
         }
         if (this->arr[keyhash] == nullptr)
         {
-            cout << "Provided key has no value" << endl;
-            return;
+            this->arr[keyhash] = new Node<T>();
         }
-        //return this->arr[keyhash]->data;
-        result = this->arr[keyhash]->data;
+        return this->arr[keyhash]->data;
     }
 
     Node<T> &setval(int &keyhash)
@@ -149,6 +147,7 @@ public:
     Vector<V> vector;
     int capacity;
     Hasher hasher;
+    
     UnorderedMap()
     {
         this->capacity = 50;
@@ -169,18 +168,18 @@ public:
         return this->vector.find(keyhash);
     }
 
-    V operator[](K key)
+    V &operator[](K key)
     {
         int keyhash = this->hasher(key);
-        V result;
-        this->vector.getval(keyhash, result);
-        return result;
+        return this->vector.getval(keyhash);
     }
 };
 
 int main()
 {
     UnorderedMap<string, string, StringHash> um;
-    um.insert("name", "akash");
-    cout << um["name"] << endl;
+    //um.insert("name", "akashdeep");
+    um["surname"] = "singh";
+    //cout << um["name"] << endl;
+    cout << um["surname"] << endl;
 }

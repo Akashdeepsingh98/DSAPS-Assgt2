@@ -337,7 +337,7 @@ public:
         {
             if (cmp(cur->key, key))
                 cur = cur->right;
-            else if (cmp(key < cur->key))
+            else if (cmp(key, cur->key))
                 cur = cur->left;
             else
                 return true;
@@ -356,8 +356,8 @@ public:
         {
             postOrderDel(node->left);
             postOrderDel(node->right);
-            delete this->left;
-            delete this->right;
+            delete node->left;
+            delete node->right;
         }
     }
 
@@ -365,6 +365,7 @@ public:
     {
         postOrderDel(this->root);
         delete this->root;
+        this->numNodes = 0;
     }
 
     V &operator[](K key)
@@ -386,6 +387,13 @@ int main()
 {
     OrderedMap<int, int, IntegerComp> *m = new OrderedMap<int, int, IntegerComp>();
     m->insert(3, 5);
-    (*m)[3] = 10;
-    cout << (*m)[3] << endl;
+    m->insert(4, 20);
+    cout << m->size() << endl;
+    //(*m)[3] = 10;
+    m->erase(3);
+    cout << m->size() << endl;
+    cout << m->find(3) << endl;
+    cout << m->find(4) << endl;
+    m->clear();
+    cout << m->size() << endl;
 }
