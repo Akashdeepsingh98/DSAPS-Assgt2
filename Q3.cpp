@@ -149,7 +149,7 @@ private:
         return node;
     }
     //rightrotate ok
-    Node<K,V> *rightRotate(Node<K,V> *t2)
+    Node<K, V> *rightRotate(Node<K, V> *t2)
     {
         Node<T> *t1 = t2->left;
         Node<T> *t3 = t1->right;
@@ -160,7 +160,7 @@ private:
         return t1;
     }
     //leftrotate ok
-    Node<K,V> *leftRotate(Node<K,V> *t2)
+    Node<K, V> *leftRotate(Node<K, V> *t2)
     {
         Node<T> *t1 = t2->right;
         Node<T> *t3 = t1->left;
@@ -171,14 +171,14 @@ private:
         return t1;
     }
     //minnode doubtful
-    Node<K,V> *minNode(Node<K,V> *node)
+    Node<K, V> *minNode(Node<K, V> *node)
     {
         while (node->left != nullptr)
             node = node->left;
         return node;
     }
     //deleteutil ok
-    Node<K,V> *deleteUtil(Node<K,V> *node, K &key)
+    Node<K, V> *deleteUtil(Node<K, V> *node, K &key)
     {
         if (node == nullptr)
             return nullptr;
@@ -195,7 +195,7 @@ private:
         {
             if (node->left != nullptr && node->right != nullptr)
             {
-                Node<K,V> *inordersuccessor = minNode(node->right);
+                Node<K, V> *inordersuccessor = minNode(node->right);
                 node->key = inordersuccessor->key;
                 node->right = deleteUtil(node->right, inordersuccessor->key);
             }
@@ -205,7 +205,7 @@ private:
             }
             else
             {
-                Node<K,V> *temp;
+                Node<K, V> *temp;
                 if (node->left != nullptr)
                     temp = node->left;
                 else
@@ -250,8 +250,8 @@ private:
 
         return node;
     }
-    //inorderForOcc doubtful 
-    void inorderForOcc(Node<K,V> *node, int &count, K &key)
+    //inorderForOcc doubtful
+    void inorderForOcc(Node<K, V> *node, int &count, K &key)
     {
         if (node != nullptr)
         {
@@ -264,7 +264,7 @@ private:
         }
     }
     //findle doubtful
-    Node<K,V> *findle(K key)
+    Node<K, V> *findle(K key)
     {
         Node<T> *cur = this->root;
         Node<T> *cur2 = this->root;
@@ -347,8 +347,8 @@ private:
             }
         }
     }
-
-    void revInorder(Node<T> *node, int &count, int k, Node<T> **kth)
+    //revInorder doubtful
+    void revInorder(Node<K, V> *node, int &count, int k, Node<K, V> **kth)
     {
         if (node != nullptr)
         {
@@ -363,24 +363,25 @@ private:
             revInorder(node->left, count, k, kth);
         }
     }
-
-    void countRange(Node<T> *node, int &count, T &ldata, T &udata)
+    //countrange doubtful
+    void countRange(Node<K, V> *node, int &count, K &lkey, K &ukey)
     {
         if (node != nullptr)
         {
-            if ((cmp(ldata, node->data) || (!cmp(ldata, node->data) && !cmp(node->data, ldata))) && (cmp(node->data, udata) || (!cmp(node->data, udata) && !cmp(udata, node.data))))
+            if ((cmp(lkey, node->key) || (!cmp(lkey, node->key) && !cmp(node->key, lkey))) &&
+                (cmp(node->key, ukey) || (!cmp(node->key, ukey) && !cmp(ukey, node->key))))
             {
                 count++;
-                countRange(node->left, count, ldata, udata);
-                countRange(node->right, count, ldata, udata);
+                countRange(node->left, count, lkey, ukey);
+                countRange(node->right, count, lkey, ukey);
             }
-            else if (cmp(node->data, ldata))
+            else if (cmp(node->key, lkey))
             {
-                countRange(node->right, count, ldata, udata);
+                countRange(node->right, count, lkey, ukey);
             }
-            else if (cmp(udata, node->data))
+            else if (cmp(ukey, node->key))
             {
-                countRange(node->left, count, ldata, udata);
+                countRange(node->left, count, lkey, ukey);
             }
         }
     }
