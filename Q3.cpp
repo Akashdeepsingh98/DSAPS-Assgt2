@@ -159,45 +159,45 @@ private:
         t1->height = max(height(t1->left), height(t1->right)) + 1;
         return t1;
     }
-
-    Node<T> *leftRotate(Node<T> *z)
+    //leftrotate ok
+    Node<K,V> *leftRotate(Node<K,V> *t2)
     {
-        Node<T> *y = z->right;
-        Node<T> *yleft = y->left;
-        y->left = z;
-        z->right = yleft;
-        z->height = max(height(z->left), height(z->right)) + 1;
-        y->height = max(height(y->left), height(y->right)) + 1;
-        return y;
+        Node<T> *t1 = t2->right;
+        Node<T> *t3 = t1->left;
+        t1->left = t2;
+        t2->right = t3;
+        t2->height = max(height(t2->left), height(t2->right)) + 1;
+        t1->height = max(height(t1->left), height(t1->right)) + 1;
+        return t1;
     }
-
-    Node<T> *minNode(Node<T> *node)
+    //minnode doubtful
+    Node<K,V> *minNode(Node<K,V> *node)
     {
         while (node->left != nullptr)
             node = node->left;
         return node;
     }
-
-    Node<T> *deleteUtil(Node<T> *node, T &data)
+    //deleteutil ok
+    Node<K,V> *deleteUtil(Node<K,V> *node, K &key)
     {
         if (node == nullptr)
             return nullptr;
 
-        if (cmp(data, node->data))
+        if (cmp(key, node->key))
         {
-            node->left = deleteUtil(node->left, data);
+            node->left = deleteUtil(node->left, key);
         }
-        else if (cmp(node->data, data))
+        else if (cmp(node->key, key))
         {
-            node->right = deleteUtil(node->right, data);
+            node->right = deleteUtil(node->right, key);
         }
         else
         {
             if (node->left != nullptr && node->right != nullptr)
             {
-                Node<T> *inordersuccessor = minNode(node->right);
-                node->data = inordersuccessor->data;
-                node->right = deleteUtil(node->right, inordersuccessor->data);
+                Node<K,V> *inordersuccessor = minNode(node->right);
+                node->key = inordersuccessor->key;
+                node->right = deleteUtil(node->right, inordersuccessor->key);
             }
             else if (node->left == nullptr && node->right == nullptr)
             {
@@ -205,13 +205,13 @@ private:
             }
             else
             {
-                Node<T> *temp;
+                Node<K,V> *temp;
                 if (node->left != nullptr)
                     temp = node->left;
                 else
                     temp = node->right;
 
-                node->data = temp->data;
+                node->key = temp->key;
                 node->left = node->right = nullptr;
             }
         }
