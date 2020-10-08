@@ -250,32 +250,32 @@ private:
 
         return node;
     }
-
-    void inorderForOcc(Node<T> *node, int &count, T &data)
+    //inorderForOcc doubtful 
+    void inorderForOcc(Node<K,V> *node, int &count, K &key)
     {
         if (node != nullptr)
         {
-            inorderForOcc(node->left, count, data);
-            if (node->data == data)
+            inorderForOcc(node->left, count, key);
+            if (node->key == key)
             {
                 count++;
             }
-            inorderForOcc(node->right, count, data);
+            inorderForOcc(node->right, count, key);
         }
     }
-
-    Node<T> *findle(T data)
+    //findle doubtful
+    Node<K,V> *findle(K key)
     {
         Node<T> *cur = this->root;
         Node<T> *cur2 = this->root;
         Node<T> *prevcandidate = cur;
         while (cur2 != nullptr)
         {
-            if (cur2->data == data)
+            if (cur2->key == key)
             {
                 return cur2;
             }
-            else if (cmp(cur2->data, data))
+            else if (cmp(cur2->key, key))
             {
                 prevcandidate = cur2;
                 cur = cur2;
@@ -289,16 +289,16 @@ private:
 
         while (true)
         {
-            if (cur->data == data)
+            if (cur->key == key)
             {
                 return cur;
             }
-            else if (cmp(cur->data, data))
+            else if (cmp(cur->key, key))
             {
                 prevcandidate = cur;
                 if (cur->right != nullptr)
                 {
-                    if (cmp(data, cur->right->data))
+                    if (cmp(key, cur->right->key))
                     {
                         if (cur->right->left == nullptr)
                         {
@@ -321,14 +321,13 @@ private:
             }
             else
             {
-                // data < cur->data
                 if (cur->left == nullptr)
                 {
                     return prevcandidate;
                 }
                 else
                 {
-                    if (cmp(cur->left->data, data))
+                    if (cmp(cur->left->key, key))
                     {
                         prevcandidate = cur->left;
                         if (cur->left->right == nullptr)
