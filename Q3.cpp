@@ -50,7 +50,7 @@ class Node
 private:
 public:
     K key;
-    V data;
+    V value;
     Node<K, V> *left;
     Node<K, V> *right;
     int height;
@@ -67,31 +67,32 @@ template <class K, class V, class Comparator>
 class OrderedMap
 {
 private:
+    //height ok
     int height(Node<K, V> *node)
     {
         if (node == nullptr)
             return 0;
         return node->height;
     }
-
+    //balance ok
     int balance(Node<K, V> *node)
     {
         if (node == nullptr)
             return 0;
         return height(node->left) - height(node->right);
     }
-
-    void inorderUtil(Node<T> *node)
+    //inorderutil doubtful
+    void inorderUtil(Node<K, V> *node)
     {
         if (node != nullptr)
         {
             inorderUtil(node->left);
-            cout << node->data << " ";
+            cout << node->value << " ";
             inorderUtil(node->right);
         }
     }
-
-    Node<T> *insertUtil(Node<T> *node, Node<T> *newnode)
+    //insertutil ok
+    Node<K, V> *insertUtil(Node<K, V> *node, Node<K, V> *newnode)
     {
         // if empty subtree
         if (node == nullptr)
@@ -99,40 +100,38 @@ private:
             return newnode;
         }
 
-        if (cmp(newnode->data, node->data))
+        if (cmp(newnode->key, node->key))
         {
             node->left = insertUtil(node->left, newnode);
         }
-        else if (cmp(node->data, newnode->data))
+        else if (cmp(node->key, newnode->key))
         {
             node->right = insertUtil(node->right, newnode);
         }
-        else if (!cmp(newnode->data, node->data) && !cmp(node->data, newnode->data))
+        else if (!cmp(newnode->key, node->key) && !cmp(node->key, newnode->key))
         {
             node->left = insertUtil(node->left, newnode);
         }
 
         node->height = max(height(node->left), height(node->right)) + 1;
         int nodebal = balance(node);
-        //cout<<nodebal<<endl;
 
         //left left
-        //(nodebal > 1 && (cmp(newnode->data, node->left->data) || newnode->data == node->left->data))
         if (nodebal > 1 &&
-            (cmp(newnode->data, node->left->data) ||
-             (!cmp(newnode->data, node->left->data) && !cmp(node->left->data, newnode->data))))
+            (cmp(newnode->key, node->left->key) ||
+             (!cmp(newnode->key, node->left->key) && !cmp(node->left->key, newnode->key))))
         {
             return rightRotate(node);
         }
 
         //right right
-        if (nodebal < -1 && cmp(node->right->data, newnode->data))
+        if (nodebal < -1 && cmp(node->right->key, newnode->key))
         {
             return leftRotate(node);
         }
 
         //left right
-        if (nodebal > 1 && cmp(node->left->data, newnode->data))
+        if (nodebal > 1 && cmp(node->left->key, newnode->key))
         {
             node->left = leftRotate(node->left);
             return rightRotate(node);
@@ -140,8 +139,8 @@ private:
 
         //right left
         if (nodebal < -1 &&
-            (cmp(newnode->data, node->right->data) ||
-             (!cmp(newnode->data, node->right->data) && !cmp(node->right->data, newnode->data))))
+            (cmp(newnode->key, node->right->key) ||
+             (!cmp(newnode->key, node->right->key) && !cmp(node->right->key, newnode->key))))
         {
             node->right = rightRotate(node->right);
             return leftRotate(node);
@@ -149,16 +148,16 @@ private:
 
         return node;
     }
-
-    Node<T> *rightRotate(Node<T> *z)
+    //rightrotate ok
+    Node<K,V> *rightRotate(Node<K,V> *t2)
     {
-        Node<T> *y = z->left;
-        Node<T> *yright = y->right;
-        y->right = z;
-        z->left = yright;
-        z->height = max(height(z->left), height(z->right)) + 1;
-        y->height = max(height(y->left), height(y->right)) + 1;
-        return y;
+        Node<T> *t1 = t2->left;
+        Node<T> *t3 = t1->right;
+        t1->right = t2;
+        t2->left = t3;
+        t2->height = max(height(t2->left), height(t2->right)) + 1;
+        t1->height = max(height(t1->left), height(t1->right)) + 1;
+        return t1;
     }
 
     Node<T> *leftRotate(Node<T> *z)
