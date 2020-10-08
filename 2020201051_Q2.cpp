@@ -182,5 +182,5 @@ int main()
 {
     UnorderedMap<string, string, StringHash> um;
     um.insert("name", "akash");
-    cout << um["named"] << endl;
+    cout << um["name"] << endl;
 }

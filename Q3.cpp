@@ -102,11 +102,11 @@ private:
 
         if (cmp(newnode->key, node->key))
         {
-            node->left = insertUtil(node->left, newnode);
+            node->left = insertUtil(node->left, newnode, inserted);
         }
         else if (cmp(node->key, newnode->key))
         {
-            node->right = insertUtil(node->right, newnode);
+            node->right = insertUtil(node->right, newnode, inserted);
         }
         else if (!cmp(newnode->key, node->key) && !cmp(node->key, newnode->key))
         {
@@ -153,8 +153,8 @@ private:
     //rightrotate ok
     Node<K, V> *rightRotate(Node<K, V> *t2)
     {
-        Node<T> *t1 = t2->left;
-        Node<T> *t3 = t1->right;
+        Node<K, V> *t1 = t2->left;
+        Node<K, V> *t3 = t1->right;
         t1->right = t2;
         t2->left = t3;
         t2->height = max(height(t2->left), height(t2->right)) + 1;
@@ -164,8 +164,8 @@ private:
     //leftrotate ok
     Node<K, V> *leftRotate(Node<K, V> *t2)
     {
-        Node<T> *t1 = t2->right;
-        Node<T> *t3 = t1->left;
+        Node<K, V> *t1 = t2->right;
+        Node<K, V> *t3 = t1->left;
         t1->left = t2;
         t2->right = t3;
         t2->height = max(height(t2->left), height(t2->right)) + 1;
@@ -253,103 +253,7 @@ private:
 
         return node;
     }
-    //inorderForOcc doubtful
-    void inorderForOcc(Node<K, V> *node, int &count, K &key)
-    {
-        if (node != nullptr)
-        {
-            inorderForOcc(node->left, count, key);
-            if (node->key == key)
-            {
-                count++;
-            }
-            inorderForOcc(node->right, count, key);
-        }
-    }
-    //findle doubtful
-    Node<K, V> *findle(K key)
-    {
-        Node<T> *cur = this->root;
-        Node<T> *cur2 = this->root;
-        Node<T> *prevcandidate = cur;
-        while (cur2 != nullptr)
-        {
-            if (cur2->key == key)
-            {
-                return cur2;
-            }
-            else if (cmp(cur2->key, key))
-            {
-                prevcandidate = cur2;
-                cur = cur2;
-                break;
-            }
-            cur2 = cur2->left;
-        }
 
-        if (cur2 == nullptr)
-            return nullptr;
-
-        while (true)
-        {
-            if (cur->key == key)
-            {
-                return cur;
-            }
-            else if (cmp(cur->key, key))
-            {
-                prevcandidate = cur;
-                if (cur->right != nullptr)
-                {
-                    if (cmp(key, cur->right->key))
-                    {
-                        if (cur->right->left == nullptr)
-                        {
-                            return prevcandidate;
-                        }
-                        else
-                        {
-                            cur = cur->right;
-                        }
-                    }
-                    else
-                    {
-                        cur = cur->right;
-                    }
-                }
-                else
-                {
-                    return prevcandidate;
-                }
-            }
-            else
-            {
-                if (cur->left == nullptr)
-                {
-                    return prevcandidate;
-                }
-                else
-                {
-                    if (cmp(cur->left->key, key))
-                    {
-                        prevcandidate = cur->left;
-                        if (cur->left->right == nullptr)
-                        {
-                            return cur->left;
-                        }
-                        else
-                        {
-                            cur = cur->left;
-                        }
-                    }
-                    else
-                    {
-                        cur = cur->left;
-                    }
-                }
-            }
-        }
-    }
     //revInorder doubtful
     void revInorder(Node<K, V> *node, int &count, int k, Node<K, V> **kth)
     {
@@ -393,7 +297,7 @@ public:
     Node<K, V> *root;
     int numNodes;
     Comparator cmp;
-    AVL()
+    OrderedMap()
     {
         this->root = nullptr;
         this->numNodes = 0;
@@ -416,10 +320,10 @@ public:
         cout << endl;
     }
 
-    void deleteNode(K key)
+    void erase(K key)
     {
         bool deleted = false;
-        this->root = deleteUtil(this->root, data, deleted);
+        this->root = deleteUtil(this->root, key, deleted);
         if (deleted)
         {
             this->numNodes--;
@@ -441,210 +345,14 @@ public:
         return false;
     }
 
-    int countOccurence(K key)
-    {
-        int count = 0;
-        Node<K, V> *cur = this->root;
-        while (cur != nullptr)
-        {
-            if (cmp(cur->key, key))
-                cur = cur->right;
-            else if (cmp(key < cur->key))
-                cur = cur->left;
-            else
-            {
-                inorderForOcc(cur, count, data);
-                break;
-            }
-        }
-        return count;
-    }
-
-    Node<T> *lowerBound(T data)
-    {
-        Node<T> *cur = this->root;
-        Node<T> *prevcandidate = cur;
-        Node<T> *cur2 = this->root;
-        while (cur2 != nullptr)
-        {
-            if (!cmp(cur2->data, data) && !cmp(data, cur2->data))
-            {
-                return cur2;
-            }
-            else if (cmp(data, cur2->data))
-            {
-                prevcandidate = cur2;
-                cur = cur2;
-                break;
-            }
-            cur2 = cur2->right;
-        }
-        if (cur2 == nullptr)
-        {
-            return nullptr;
-        }
-
-        while (true)
-        {
-            if (!cmp(cur->data, data) && !cmp(data, cur->data))
-            {
-                return cur;
-            }
-            else if (cmp(data, cur->data))
-            {
-                prevcandidate = cur;
-                if (cur->left != nullptr)
-                {
-                    if (cmp(cur->left->data, data))
-                    {
-                        if (cur->left->right == nullptr)
-                        {
-                            return prevcandidate;
-                        }
-                        else
-                        {
-                            cur = cur->left;
-                        }
-                    }
-                    else
-                    {
-                        cur = cur->left;
-                    }
-                }
-                else
-                {
-                    return prevcandidate;
-                }
-            }
-            else
-            {
-                if (cur->right != nullptr)
-                {
-                    if (cmp(data, cur->right->data))
-                    {
-                        prevcandidate = cur->right;
-                        if (cur->right->left == nullptr)
-                        {
-                            return cur->right;
-                        }
-                        else
-                        {
-                            cur = cur->right;
-                        }
-                    }
-                    else
-                    {
-                        cur = cur->right;
-                    }
-                }
-                else
-                {
-                    return prevcandidate;
-                }
-            }
-        }
-        return nullptr;
-    }
-
-    Node<T> *upperBound(T data)
-    {
-        Node<T> *cur = this->root;
-        Node<T> *prevcandidate = cur;
-        Node<T> *cur2 = this->root;
-        while (cur2 != nullptr)
-        {
-            if (cmp(data, cur2->data))
-            {
-                prevcandidate = cur2;
-                cur = cur2;
-                break;
-            }
-            cur2 = cur2->right;
-        }
-        if (cur2 == nullptr)
-        {
-            return nullptr;
-        }
-
-        while (true)
-        {
-            if (!cmp(cur->data, data) && !cmp(data, cur->data))
-            {
-                if (cur->right == nullptr)
-                {
-                    return prevcandidate;
-                }
-                else
-                {
-                    cur = cur->right;
-                }
-            }
-            else if (cmp(data, cur->data))
-            {
-                prevcandidate = cur;
-                if (cur->left == nullptr)
-                {
-                    return prevcandidate;
-                }
-                else
-                {
-                    cur = cur->left;
-                }
-            }
-            else
-            {
-                if (cur->right == nullptr)
-                {
-                    return prevcandidate;
-                }
-                else
-                {
-                    cur = cur->right;
-                }
-            }
-        }
-    }
-
-    Node<T> *closestElement(T data)
-    {
-        Node<T> *ge = lowerBound(data);
-        Node<T> *le = findle(data);
-        if (ge == nullptr)
-            return le;
-        if (le == nullptr)
-            return ge;
-        if (!cmp(le->data, data) && !cmp(data, le->data))
-            return ge;
-        if (!cmp(ge->data, data) && !cmp(data, ge->data))
-            return le;
-        if (abs(le->data - data) <= abs(ge->data - data))
-            return le;
-        return ge;
-    }
-
-    Node<T> *kthlargest(int k)
-    {
-        Node<T> *kth = nullptr;
-        int count = 0;
-        revInorder(this->root, count, k, &kth);
-        return kth;
-    }
-
-    int countInRange(T ldata, T udata)
-    {
-        int count = 0;
-        countRange(this->root, count, ldata, udata);
-        return count;
-    }
-
     int size()
     {
         return this->numNodes;
     }
 
-    void postOrderDel(Node<K,V>* node)
+    void postOrderDel(Node<K, V> *node)
     {
-        if(node!=nullptr)
+        if (node != nullptr)
         {
             postOrderDel(node->left);
             postOrderDel(node->right);
@@ -658,9 +366,26 @@ public:
         postOrderDel(this->root);
         delete this->root;
     }
+
+    V &operator[](K key)
+    {
+        Node<K, V> *cur = this->root;
+        while (cur != nullptr)
+        {
+            if (cmp(cur->key, key))
+                cur = cur->right;
+            else if (cmp(key, cur->key))
+                cur = cur->left;
+            else
+                return cur->value;
+        }
+    }
 };
 
 int main()
 {
-    
+    OrderedMap<int, int, IntegerComp> *m = new OrderedMap<int, int, IntegerComp>();
+    m->insert(3, 5);
+    (*m)[3] = 10;
+    cout << (*m)[3] << endl;
 }

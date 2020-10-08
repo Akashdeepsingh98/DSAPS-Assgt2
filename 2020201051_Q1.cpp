@@ -417,7 +417,7 @@ public:
         {
             if (cmp(cur->data, data))
                 cur = cur->right;
-            else if (cmp(data < cur->data))
+            else if (cmp(data, cur->data))
                 cur = cur->left;
             else
                 return true;
