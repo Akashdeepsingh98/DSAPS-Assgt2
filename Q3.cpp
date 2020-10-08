@@ -92,7 +92,7 @@ private:
         }
     }
     //insertutil ok
-    Node<K, V> *insertUtil(Node<K, V> *node, Node<K, V> *newnode)
+    Node<K, V> *insertUtil(Node<K, V> *node, Node<K, V> *newnode, bool &inserted)
     {
         // if empty subtree
         if (node == nullptr)
@@ -110,7 +110,9 @@ private:
         }
         else if (!cmp(newnode->key, node->key) && !cmp(node->key, newnode->key))
         {
-            node->left = insertUtil(node->left, newnode);
+            //node->left = insertUtil(node->left, newnode);
+            node->value = newnode->value;
+            inserted = false;
         }
 
         node->height = max(height(node->left), height(node->right)) + 1;
@@ -178,26 +180,27 @@ private:
         return node;
     }
     //deleteutil ok
-    Node<K, V> *deleteUtil(Node<K, V> *node, K &key)
+    Node<K, V> *deleteUtil(Node<K, V> *node, K &key, bool &deleted)
     {
         if (node == nullptr)
             return nullptr;
 
         if (cmp(key, node->key))
         {
-            node->left = deleteUtil(node->left, key);
+            node->left = deleteUtil(node->left, key, deleted);
         }
         else if (cmp(node->key, key))
         {
-            node->right = deleteUtil(node->right, key);
+            node->right = deleteUtil(node->right, key, deleted);
         }
         else
         {
+            deleted = true;
             if (node->left != nullptr && node->right != nullptr)
             {
                 Node<K, V> *inordersuccessor = minNode(node->right);
                 node->key = inordersuccessor->key;
-                node->right = deleteUtil(node->right, inordersuccessor->key);
+                node->right = deleteUtil(node->right, inordersuccessor->key, deleted);
             }
             else if (node->left == nullptr && node->right == nullptr)
             {
@@ -387,17 +390,24 @@ private:
     }
 
 public:
-    Node<T> *root;
+    Node<K, V> *root;
+    int numNodes;
     Comparator cmp;
     AVL()
     {
         this->root = nullptr;
+        this->numNodes = 0;
     }
 
-    void insert(T data)
+    void insert(K key, V value)
     {
-        Node<T> *newnode = new Node<T>(data);
-        this->root = this->insertUtil(this->root, newnode);
+        bool inserted = true;
+        Node<K, V> *newnode = new Node<K, V>(key, value);
+        this->root = this->insertUtil(this->root, newnode, inserted);
+        if (inserted)
+        {
+            this->numNodes++;
+        }
     }
 
     void inorder()
@@ -406,19 +416,24 @@ public:
         cout << endl;
     }
 
-    void deleteNode(T data)
+    void deleteNode(K key)
     {
-        this->root = deleteUtil(this->root, data);
+        bool deleted = false;
+        this->root = deleteUtil(this->root, data, deleted);
+        if (deleted)
+        {
+            this->numNodes--;
+        }
     }
 
-    bool search(T data)
+    bool find(K key)
     {
-        Node<T> *cur = this->root;
+        Node<K, V> *cur = this->root;
         while (cur != nullptr)
         {
-            if (cmp(cur->data, data))
+            if (cmp(cur->key, key))
                 cur = cur->right;
-            else if (cmp(data < cur->data))
+            else if (cmp(key < cur->key))
                 cur = cur->left;
             else
                 return true;
@@ -426,15 +441,15 @@ public:
         return false;
     }
 
-    int countOccurence(T data)
+    int countOccurence(K key)
     {
         int count = 0;
-        Node<T> *cur = this->root;
+        Node<K, V> *cur = this->root;
         while (cur != nullptr)
         {
-            if (cmp(cur->data, data))
+            if (cmp(cur->key, key))
                 cur = cur->right;
-            else if (cmp(data < cur->data))
+            else if (cmp(key < cur->key))
                 cur = cur->left;
             else
             {
@@ -621,8 +636,31 @@ public:
         countRange(this->root, count, ldata, udata);
         return count;
     }
+
+    int size()
+    {
+        return this->numNodes;
+    }
+
+    void postOrderDel(Node<K,V>* node)
+    {
+        if(node!=nullptr)
+        {
+            postOrderDel(node->left);
+            postOrderDel(node->right);
+            delete this->left;
+            delete this->right;
+        }
+    }
+
+    void clear()
+    {
+        postOrderDel(this->root);
+        delete this->root;
+    }
 };
 
 int main()
 {
+    
 }
