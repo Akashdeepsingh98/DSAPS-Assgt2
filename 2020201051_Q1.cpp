@@ -44,6 +44,17 @@ public:
     }
 };
 
+class CharComp
+{
+public:
+    bool operator()(char a, char b)
+    {
+        if (a < b)
+            return true;
+        return false;
+    }
+};
+
 template <class T>
 class Node
 {
@@ -112,10 +123,7 @@ private:
 
         node->height = max(height(node->left), height(node->right)) + 1;
         int nodebal = balance(node);
-        //cout<<nodebal<<endl;
 
-        //left left
-        //(nodebal > 1 && (cmp(newnode->data, node->left->data) || newnode->data == node->left->data))
         if (nodebal > 1 &&
             (cmp(newnode->data, node->left->data) ||
              (!cmp(newnode->data, node->left->data) && !cmp(node->left->data, newnode->data))))
@@ -368,7 +376,7 @@ private:
     {
         if (node != nullptr)
         {
-            if ((cmp(ldata, node->data) || (!cmp(ldata, node->data) && !cmp(node->data, ldata))) && (cmp(node->data, udata) || (!cmp(node->data, udata) && !cmp(udata, node.data))))
+            if ((cmp(ldata, node->data) || (!cmp(ldata, node->data) && !cmp(node->data, ldata))) && (cmp(node->data, udata) || (!cmp(node->data, udata) && !cmp(udata, node->data))))
             {
                 count++;
                 countRange(node->left, count, ldata, udata);
@@ -433,7 +441,7 @@ public:
         {
             if (cmp(cur->data, data))
                 cur = cur->right;
-            else if (cmp(data < cur->data))
+            else if (cmp(data, cur->data))
                 cur = cur->left;
             else
             {
@@ -624,18 +632,32 @@ public:
 
 int main()
 {
-    AVL<int, IntegerComp> *a = new AVL<int, IntegerComp>();
-    a->insert(1);
-    a->insert(2);
-    a->insert(3);
-    a->insert(4);
-    a->insert(4);
-    a->insert(5);
-    int c;
+    AVL<string, StringComp> *a = new AVL<string, StringComp>();
+    a->insert("abc");
+    a->insert("def");
+    a->insert("cvb");
+    a->insert("qwe");
+    a->insert("jkl");
+    a->insert("cvb");
+
+    string c;
     cin >> c;
-    Node<int> *b = a->kthlargest(c);
-    if (b != nullptr)
+    if (a->search(c))
     {
-        cout << b->data << endl;
+        cout << "True" << endl;
     }
+    //else
+    //{
+    //    cout << "False" << endl;
+    //}
+    //Node<int> *b = a->kthlargest(c);
+    //if (b != nullptr)
+    //{
+    //    cout << b->data << endl;
+    //}
+    //cout << a->countOccurence(c) << endl;
+    //int c, d;
+    //cin >> c >> d;
+    //cout << a->countInRange(c, d) << endl;
+    a->inorder();
 }
