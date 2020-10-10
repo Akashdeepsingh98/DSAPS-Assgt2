@@ -156,26 +156,26 @@ private:
         return node;
     }
 
-    Node<T> *rightRotate(Node<T> *z)
+    Node<T> *rightRotate(Node<T> *t2)
     {
-        Node<T> *y = z->left;
-        Node<T> *yright = y->right;
-        y->right = z;
-        z->left = yright;
-        z->height = max(height(z->left), height(z->right)) + 1;
-        y->height = max(height(y->left), height(y->right)) + 1;
-        return y;
+        Node<T> *t1 = t2->left;
+        Node<T> *t3 = t1->right;
+        t1->right = t2;
+        t2->left = t3;
+        t2->height = max(height(t2->left), height(t2->right)) + 1;
+        t1->height = max(height(t1->left), height(t1->right)) + 1;
+        return t1;
     }
 
-    Node<T> *leftRotate(Node<T> *z)
+    Node<T> *leftRotate(Node<T> *t2)
     {
-        Node<T> *y = z->right;
-        Node<T> *yleft = y->left;
-        y->left = z;
-        z->right = yleft;
-        z->height = max(height(z->left), height(z->right)) + 1;
-        y->height = max(height(y->left), height(y->right)) + 1;
-        return y;
+        Node<T> *t1 = t2->right;
+        Node<T> *t3 = t1->left;
+        t1->left = t2;
+        t2->right = t3;
+        t2->height = max(height(t2->left), height(t2->right)) + 1;
+        t1->height = max(height(t1->left), height(t1->right)) + 1;
+        return t1;
     }
 
     Node<T> *minNode(Node<T> *node)

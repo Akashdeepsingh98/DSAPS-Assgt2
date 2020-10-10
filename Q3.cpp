@@ -44,6 +44,17 @@ public:
     }
 };
 
+class CharComp
+{
+public:
+    bool operator()(char a, char b)
+    {
+        if (a < b)
+            return true;
+        return false;
+    }
+};
+
 template <class K, class V>
 class Node
 {
@@ -58,6 +69,12 @@ public:
     {
         this->key = key;
         this->value = value;
+        this->left = this->right = nullptr;
+        this->height = 1;
+    }
+    Node(K key)
+    {
+        this->key = key;
         this->left = this->right = nullptr;
         this->height = 1;
     }
@@ -81,16 +98,7 @@ private:
             return 0;
         return height(node->left) - height(node->right);
     }
-    //inorderutil doubtful
-    void inorderUtil(Node<K, V> *node)
-    {
-        if (node != nullptr)
-        {
-            inorderUtil(node->left);
-            cout << node->value << " ";
-            inorderUtil(node->right);
-        }
-    }
+
     //insertutil ok
     Node<K, V> *insertUtil(Node<K, V> *node, Node<K, V> *newnode, bool &inserted)
     {
@@ -110,7 +118,6 @@ private:
         }
         else if (!cmp(newnode->key, node->key) && !cmp(node->key, newnode->key))
         {
-            //node->left = insertUtil(node->left, newnode);
             node->value = newnode->value;
             inserted = false;
         }
@@ -172,7 +179,7 @@ private:
         t1->height = max(height(t1->left), height(t1->right)) + 1;
         return t1;
     }
-    //minnode doubtful
+    //minnode ok
     Node<K, V> *minNode(Node<K, V> *node)
     {
         while (node->left != nullptr)
@@ -254,42 +261,14 @@ private:
         return node;
     }
 
-    //revInorder doubtful
-    void revInorder(Node<K, V> *node, int &count, int k, Node<K, V> **kth)
+    void postOrderDel(Node<K, V> *node)
     {
         if (node != nullptr)
         {
-            revInorder(node->right, count, k, kth);
-            count++;
-            if (count == k)
-            {
-                if (*kth == nullptr)
-                    *kth = node;
-                return;
-            }
-            revInorder(node->left, count, k, kth);
-        }
-    }
-    //countrange doubtful
-    void countRange(Node<K, V> *node, int &count, K &lkey, K &ukey)
-    {
-        if (node != nullptr)
-        {
-            if ((cmp(lkey, node->key) || (!cmp(lkey, node->key) && !cmp(node->key, lkey))) &&
-                (cmp(node->key, ukey) || (!cmp(node->key, ukey) && !cmp(ukey, node->key))))
-            {
-                count++;
-                countRange(node->left, count, lkey, ukey);
-                countRange(node->right, count, lkey, ukey);
-            }
-            else if (cmp(node->key, lkey))
-            {
-                countRange(node->right, count, lkey, ukey);
-            }
-            else if (cmp(ukey, node->key))
-            {
-                countRange(node->left, count, lkey, ukey);
-            }
+            postOrderDel(node->left);
+            postOrderDel(node->right);
+            delete node->left;
+            delete node->right;
         }
     }
 
@@ -312,12 +291,6 @@ public:
         {
             this->numNodes++;
         }
-    }
-
-    void inorder()
-    {
-        inorderUtil(this->root);
-        cout << endl;
     }
 
     void erase(K key)
@@ -350,17 +323,6 @@ public:
         return this->numNodes;
     }
 
-    void postOrderDel(Node<K, V> *node)
-    {
-        if (node != nullptr)
-        {
-            postOrderDel(node->left);
-            postOrderDel(node->right);
-            delete node->left;
-            delete node->right;
-        }
-    }
-
     void clear()
     {
         postOrderDel(this->root);
@@ -380,20 +342,48 @@ public:
             else
                 return cur->value;
         }
+        bool inserted = true;
+        Node<K, V> *newnode = new Node<K, V>(key);
+        this->insertUtil(this->root, newnode, inserted);
+        if (inserted)
+        {
+            this->numNodes++;
+        }
+        return newnode->value;
+    }
+
+    void inorder()
+    {
+        inorderUtil(this->root);
+        cout << endl;
+    }
+
+    void inorderUtil(Node<K, V> *node)
+    {
+        if (node != nullptr)
+        {
+            inorderUtil(node->left);
+            cout << node->key << " ";
+            inorderUtil(node->right);
+        }
     }
 };
 
 int main()
 {
-    OrderedMap<int, int, IntegerComp> *m = new OrderedMap<int, int, IntegerComp>();
-    m->insert(3, 5);
-    m->insert(4, 20);
-    cout << m->size() << endl;
-    //(*m)[3] = 10;
-    m->erase(3);
-    cout << m->size() << endl;
-    cout << m->find(3) << endl;
-    cout << m->find(4) << endl;
-    m->clear();
-    cout << m->size() << endl;
+    OrderedMap<int, int, IntegerComp> m;
+    m.insert(3, 5);
+    m.insert(4, 20);
+    m.inorder();
+    cout << m.size() << endl;
+    m[5] = 10;
+    //m.erase(3);
+    m.inorder();
+    cout << m.size() << endl;
+    cout << m.find(3) << endl;
+    cout << m.find(4) << endl;
+    cout<<m[4]<<endl;
+    m.inorder();
+    m.clear();
+    cout << m.size() << endl;
 }
