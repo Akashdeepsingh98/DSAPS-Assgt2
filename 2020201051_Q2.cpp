@@ -77,7 +77,7 @@ public:
         this->capacity = 50;
     }
 
-    void insert(int keyhash, T value)
+    void insert(long long int keyhash, T value)
     {
         if (keyhash >= this->capacity)
         {
@@ -98,14 +98,14 @@ public:
         this->capacity = newsize;
     }
 
-    void erase(int &keyhash)
+    void erase(long long int &keyhash)
     {
         if (keyhash >= this->capacity)
             return;
         this->arr[keyhash] = nullptr;
     }
 
-    bool find(int &keyhash)
+    bool find(long long int &keyhash)
     {
         if (keyhash >= this->capacity)
             return false;
@@ -114,7 +114,7 @@ public:
         return true;
     }
 
-    T &getval(int &keyhash)
+    T &getval(long long int &keyhash)
     {
         if (keyhash >= capacity)
         {
@@ -128,7 +128,7 @@ public:
         return this->arr[keyhash]->data;
     }
 
-    Node<T> &setval(int &keyhash)
+    Node<T> &setval(long long int &keyhash)
     {
         if (keyhash >= this->capacity)
         {
@@ -154,32 +154,37 @@ public:
     }
     void insert(K key, V value)
     {
-        int keyhash = this->hasher(key);
+        long long int keyhash = this->hasher(key);
         this->vector.insert(keyhash, value);
     }
     void erase(K key)
     {
-        int keyhash = this->hasher(key);
+        long long int keyhash = this->hasher(key);
         this->vector.erase(keyhash);
     }
     bool find(K key)
     {
-        int keyhash = this->hasher(key);
+        long long int keyhash = this->hasher(key);
         return this->vector.find(keyhash);
     }
 
     V &operator[](K key)
     {
-        int keyhash = this->hasher(key);
+        long long int keyhash = this->hasher(key);
         return this->vector.getval(keyhash);
     }
 };
 
 int main()
 {
-    UnorderedMap<string, string, StringHash> um;
+    //UnorderedMap<string, string, StringHash> um;
     //um.insert("name", "akashdeep");
-    um["surname"] = "singh";
+    //um["surname"] = "singh";
     //cout << um["name"] << endl;
-    cout << um["surname"] << endl;
+    //cout << um["surname"] << endl;
+
+    UnorderedMap<int, int, IntegerHash> um;
+    um.insert(3,5);
+    um[5] = 7;
+    cout<<um[um[3]]<<endl;
 }
